@@ -2,26 +2,14 @@
   import { getCurrentWindow } from '@tauri-apps/api/window';
   const appWindow = getCurrentWindow();
 
-  // Fonction pour déclencher le déplacement de la fenêtre
-  const handleMouseDown = async (e: MouseEvent) => {
-    // On ne déclenche le drag que si c'est le clic gauche
-    // et que l'utilisateur n'a pas cliqué sur un bouton
-    if (e.buttons === 1 && (e.target as HTMLElement).classList.contains('titlebar')) {
-      await appWindow.startDragging();
-    }
-  };
-
+  // Fonctions pour les boutons de contrôle
   const minimize = () => appWindow.minimize();
   const toggleMaximize = () => appWindow.toggleMaximize();
   const close = () => appWindow.close();
 </script>
 
-<!-- On utilise on:mousedown pour attraper le clic -->
-<div 
-  class="titlebar" 
-  on:mousedown={handleMouseDown}
-  role="presentation"
->
+<!-- L'attribut data-tauri-drag-region permet de déplacer la fenêtre en glissant cette div -->
+<div data-tauri-drag-region class="titlebar">
   <div class="logo">🔭 AwakeTonight</div>
   
   <div class="window-controls">
@@ -40,14 +28,12 @@
 <style>
   .titlebar {
     height: 40px;
-    background: #1a1a1d;
+    background: #1a1a1d; /* Couleur très sombre style CouchPotato */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    user-select: none;
+    user-select: none; /* Empêche de sélectionner le texte de la barre */
     border-bottom: 1px solid #333;
-    /* On s'assure que le curseur montre que c'est déplaçable */
-    cursor: default;
   }
 
   .logo {
@@ -55,9 +41,7 @@
     font-size: 0.9rem;
     font-weight: bold;
     color: #aaa;
-    /* IMPORTANT : pointer-events: none permet au clic de 
-       passer à travers le texte et d'atteindre la div .titlebar */
-    pointer-events: none;
+    pointer-events: none; /* Laisse le clic passer à la zone de drag en dessous */
   }
 
   .window-controls {
